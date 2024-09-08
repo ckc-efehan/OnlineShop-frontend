@@ -21,44 +21,46 @@ const loginSubmitted = ref(false)
 const registerErrorMessage = ref('')
 const loginErrorMessage = ref('')
 
-// Funktion zur Verarbeitung der Registrierung
 const handleRegisterSubmit = async () => {
   try {
     const response = await axios.post('http://localhost:8080/api/users/register', {
       userName: registerForm.value.username,
       email: registerForm.value.email,
       password: registerForm.value.passwort
-    })
+    });
 
     // Wenn die Registrierung erfolgreich ist
-    registerSubmitted.value = true
-    registerErrorMessage.value = ''
-    console.log('Registrierung erfolgreich:', response.data)
-  } catch (error: any) {
-    registerSubmitted.value = false
-    registerErrorMessage.value = error.response?.data || 'Registrierung fehlgeschlagen.'
-    console.error('Registrierungsfehler:', error)
-  }
-}
+    registerSubmitted.value = true;
+    registerErrorMessage.value = '';
+    console.log('Registrierung erfolgreich. JWT-Token wird in einem httpOnly-Cookie gespeichert.');
 
-// Funktion zur Verarbeitung des Logins
+    // Keine Speicherung im localStorage nötig
+  } catch (error: any) {
+    registerSubmitted.value = false;
+    registerErrorMessage.value = error.response?.data || 'Registrierung fehlgeschlagen.';
+    console.error('Registrierungsfehler:', error);
+  }
+};
+
 const handleLoginSubmit = async () => {
   try {
     const response = await axios.post('http://localhost:8080/api/users/login', {
       userName: loginForm.value.username,
       password: loginForm.value.passwort
-    })
+    });
 
     // Wenn das Login erfolgreich ist
-    loginSubmitted.value = true
-    loginErrorMessage.value = ''
-    console.log('Login erfolgreich:', response.data)
+    loginSubmitted.value = true;
+    loginErrorMessage.value = '';
+    console.log('Login erfolgreich.');
+
+    // Keine Speicherung im localStorage nötig
   } catch (error: any) {
-    loginSubmitted.value = false
-    loginErrorMessage.value = error.response?.data || 'Login fehlgeschlagen.'
-    console.error('Login-Fehler:', error)
+    loginSubmitted.value = false;
+    loginErrorMessage.value = error.response?.data || 'Login fehlgeschlagen.';
+    console.error('Login-Fehler:', error);
   }
-}
+};
 </script>
 
 <template>
@@ -123,7 +125,7 @@ body {
   margin: 0;
 }
 
-.register-container, .login-container {
+.register-container, .login-container, .protected-resource {
   background-color: white;
   padding: 20px;
   border-radius: 10px;
