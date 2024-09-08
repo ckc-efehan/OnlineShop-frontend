@@ -4,6 +4,10 @@
     <div class="form-container sign-up">
       <form @submit.prevent="handleRegisterSubmit">
         <h1>Account erstellen</h1>
+        <div class="social-icons">
+          <a href="#" class="icon"><i class="fa-brands fa-google"></i></a>
+          <a href="#" class="icon"><i class="fa-brands fa-apple"></i></a>
+        </div>
         <input type="text" v-model="registerForm.username" placeholder="Benutzername" required />
         <input type="email" v-model="registerForm.email" placeholder="Email" required />
         <input type="password" v-model="registerForm.passwort" placeholder="Passwort" required />
@@ -19,11 +23,14 @@
       </form>
     </div>
 
-    <!-- Login -->
+
     <div class="form-container sign-in">
       <form @submit.prevent="handleLoginSubmit">
         <h1>Anmelden</h1>
-        <!-- Benutzernamenfeld für den Login -->
+        <div class="social-icons">
+          <a href="#" class="icon"><i class="fa-brands fa-google"></i></a>
+          <a href="#" class="icon"><i class="fa-brands fa-apple"></i></a>
+        </div>
         <input type="text" v-model="loginForm.username" placeholder="Benutzername" required />
         <input type="password" v-model="loginForm.passwort" placeholder="Passwort" required />
         <a href="#">Passwort vergessen?</a>
@@ -134,7 +141,6 @@ onMounted(() => {
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
-@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css'); /* Icon styles */
 
 * {
   margin: 0;
@@ -351,5 +357,21 @@ body {
 .error {
   color: red;
   margin-top: 10px;
+}
+
+
+.social-icons{
+  margin: 20px 0;
+}
+
+.social-icons a{
+  border: 1px solid #ccc;
+  border-radius: 20%;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 3px;
+  width: 40px;
+  height: 40px;
 }
 </style>
