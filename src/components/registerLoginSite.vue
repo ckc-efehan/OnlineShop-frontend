@@ -1,3 +1,63 @@
+<template>
+  <div class="container" id="container">
+    <!-- Registrierung -->
+    <div class="form-container sign-up">
+      <form @submit.prevent="handleRegisterSubmit">
+        <h1>Create Account</h1>
+        <input type="text" v-model="registerForm.username" placeholder="Benutzername" required />
+        <input type="email" v-model="registerForm.email" placeholder="Email" required />
+        <input type="password" v-model="registerForm.passwort" placeholder="Password" required />
+        <button type="submit">Sign Up</button>
+
+        <!-- Zeige eine Fehlermeldung an, falls die Registrierung fehlschlägt -->
+        <p v-if="registerErrorMessage" class="error">{{ registerErrorMessage }}</p>
+
+        <!-- Zeige nach erfolgreicher Registrierung eine Nachricht an -->
+        <div v-if="registerSubmitted && !registerErrorMessage">
+          <h3>Successfully Registered</h3>
+        </div>
+      </form>
+    </div>
+
+    <!-- Login -->
+    <div class="form-container sign-in">
+      <form @submit.prevent="handleLoginSubmit">
+        <h1>Sign In</h1>
+        <!-- Benutzernamenfeld für den Login -->
+        <input type="text" v-model="loginForm.username" placeholder="Benutzername" required />
+        <input type="password" v-model="loginForm.passwort" placeholder="Password" required />
+        <a href="#">Forget Your Password?</a>
+        <button type="submit">Sign In</button>
+
+        <!-- Zeige eine Fehlermeldung an, falls das Login fehlschlägt -->
+        <p v-if="loginErrorMessage" class="error">{{ loginErrorMessage }}</p>
+
+        <!-- Zeige nach erfolgreichem Login eine Nachricht an -->
+        <div v-if="loginSubmitted && !loginErrorMessage">
+          <h3>Successfully Logged In</h3>
+        </div>
+      </form>
+    </div>
+
+    <!-- Umschaltbares Panel -->
+    <div class="toggle-container">
+      <div class="toggle">
+        <div class="toggle-panel toggle-left">
+          <h1>Already signed up?</h1>
+          <p>Enter your login details to start.</p>
+          <button class="hidden" id="login">Sign In</button>
+        </div>
+        <div class="toggle-panel toggle-right">
+          <h1>Not registered yet?</h1>
+          <p>Register to buy exclusive clothes.</p>
+          <button class="hidden" id="register">Sign Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
@@ -71,65 +131,6 @@ onMounted(() => {
   }
 });
 </script>
-
-<template>
-  <div class="container" id="container">
-    <!-- Registrierung -->
-    <div class="form-container sign-up">
-      <form @submit.prevent="handleRegisterSubmit">
-        <h1>Create Account</h1>
-        <input type="text" v-model="registerForm.username" placeholder="Benutzername" required />
-        <input type="email" v-model="registerForm.email" placeholder="Email" required />
-        <input type="password" v-model="registerForm.passwort" placeholder="Password" required />
-        <button type="submit">Sign Up</button>
-
-        <!-- Zeige eine Fehlermeldung an, falls die Registrierung fehlschlägt -->
-        <p v-if="registerErrorMessage" class="error">{{ registerErrorMessage }}</p>
-
-        <!-- Zeige nach erfolgreicher Registrierung eine Nachricht an -->
-        <div v-if="registerSubmitted && !registerErrorMessage">
-          <h3>Successfully Registered</h3>
-        </div>
-      </form>
-    </div>
-
-    <!-- Login -->
-    <div class="form-container sign-in">
-      <form @submit.prevent="handleLoginSubmit">
-        <h1>Sign In</h1>
-        <!-- Benutzernamenfeld für den Login -->
-        <input type="text" v-model="loginForm.username" placeholder="Benutzername" required />
-        <input type="password" v-model="loginForm.passwort" placeholder="Password" required />
-        <a href="#">Forget Your Password?</a>
-        <button type="submit">Sign In</button>
-
-        <!-- Zeige eine Fehlermeldung an, falls das Login fehlschlägt -->
-        <p v-if="loginErrorMessage" class="error">{{ loginErrorMessage }}</p>
-
-        <!-- Zeige nach erfolgreichem Login eine Nachricht an -->
-        <div v-if="loginSubmitted && !loginErrorMessage">
-          <h3>Successfully Logged In</h3>
-        </div>
-      </form>
-    </div>
-
-    <!-- Umschaltbares Panel -->
-    <div class="toggle-container">
-      <div class="toggle">
-        <div class="toggle-panel toggle-left">
-          <h1>Welcome Back!</h1>
-          <p>Enter your personal details to use all of site features</p>
-          <button class="hidden" id="login">Sign In</button>
-        </div>
-        <div class="toggle-panel toggle-right">
-          <h1>Hello, Friend!</h1>
-          <p>Register with your personal details to use all of site features</p>
-          <button class="hidden" id="register">Sign Up</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
