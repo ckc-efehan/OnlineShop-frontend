@@ -1,26 +1,27 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import axios from 'axios'
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
 
 // Formulardaten für die Registrierung
 const registerForm = ref({
   username: '',
   email: '',
   passwort: ''
-})
+});
 
 // Formulardaten für den Login
 const loginForm = ref({
   username: '',
   passwort: ''
-})
+});
 
 // Zustand zur Verfolgung der Registrierung und Login-Fehler
-const registerSubmitted = ref(false)
-const loginSubmitted = ref(false)
-const registerErrorMessage = ref('')
-const loginErrorMessage = ref('')
+const registerSubmitted = ref(false);
+const loginSubmitted = ref(false);
+const registerErrorMessage = ref('');
+const loginErrorMessage = ref('');
 
+// Funktion für die Registrierung
 const handleRegisterSubmit = async () => {
   try {
     await axios.post('http://localhost:8080/api/users/register', {
@@ -28,136 +29,322 @@ const handleRegisterSubmit = async () => {
       email: registerForm.value.email,
       password: registerForm.value.passwort
     });
-
-    // Wenn die Registrierung erfolgreich ist
     registerSubmitted.value = true;
     registerErrorMessage.value = '';
-    console.log('Registrierung erfolgreich. JWT-Token wird in einem httpOnly-Cookie gespeichert.');
-
-    // Keine Speicherung im localStorage nötig
   } catch (error: any) {
     registerSubmitted.value = false;
-    registerErrorMessage.value = error.response?.data || 'Registrierung fehlgeschlagen.';
-    console.error('Registrierungsfehler:', error);
+    registerErrorMessage.value = error.response?.data || 'Registration failed.';
   }
 };
 
+// Funktion für den Login (mit Benutzername)
 const handleLoginSubmit = async () => {
   try {
     await axios.post('http://localhost:8080/api/users/login', {
-      userName: loginForm.value.username,
+      userName: loginForm.value.username, // Benutzername statt E-Mail
       password: loginForm.value.passwort
     });
-
-    // Wenn das Login erfolgreich ist
     loginSubmitted.value = true;
     loginErrorMessage.value = '';
-    console.log('Login erfolgreich.');
-
-    // Keine Speicherung im localStorage nötig
   } catch (error: any) {
     loginSubmitted.value = false;
-    loginErrorMessage.value = error.response?.data || 'Login fehlgeschlagen.';
-    console.error('Login-Fehler:', error);
+    loginErrorMessage.value = error.response?.data || 'Login failed.';
   }
 };
+
+// Umschaltfunktion für Registrierung und Login
+onMounted(() => {
+  const container = document.getElementById('container') as HTMLElement | null;
+  const registerBtn = document.getElementById('register') as HTMLButtonElement | null;
+  const loginBtn = document.getElementById('login') as HTMLButtonElement | null;
+
+  if (registerBtn && container) {
+    registerBtn.addEventListener('click', () => {
+      container.classList.add("active");
+    });
+  }
+
+  if (loginBtn && container) {
+    loginBtn.addEventListener('click', () => {
+      container.classList.remove("active");
+    });
+  }
+});
 </script>
 
 <template>
-  <!-- Registrierung -->
-  <div class="register-container">
-    <h2>Registrieren</h2>
-    <form @submit.prevent="handleRegisterSubmit">
-      <label for="register-username">Benutzername:</label>
-      <input type="text" id="register-username" v-model="registerForm.username" required />
+  <div class="container" id="container">
+    <!-- Registrierung -->
+    <div class="form-container sign-up">
+      <form @submit.prevent="handleRegisterSubmit">
+        <h1>Create Account</h1>
+        <input type="text" v-model="registerForm.username" placeholder="Benutzername" required />
+        <input type="email" v-model="registerForm.email" placeholder="Email" required />
+        <input type="password" v-model="registerForm.passwort" placeholder="Password" required />
+        <button type="submit">Sign Up</button>
 
-      <label for="email">E-Mail:</label>
-      <input type="email" id="email" v-model="registerForm.email" required />
+        <!-- Zeige eine Fehlermeldung an, falls die Registrierung fehlschlägt -->
+        <p v-if="registerErrorMessage" class="error">{{ registerErrorMessage }}</p>
 
-      <label for="register-password">Passwort:</label>
-      <input type="password" id="register-password" v-model="registerForm.passwort" required />
-
-      <button type="submit">Registrieren</button>
-    </form>
-
-    <!-- Zeige eine Fehlermeldung an, falls die Registrierung fehlschlägt -->
-    <p v-if="registerErrorMessage" class="error">{{ registerErrorMessage }}</p>
-
-    <!-- Zeige nach der Einreichung die eingegebenen Daten an -->
-    <div v-if="registerSubmitted && !registerErrorMessage">
-      <h3>Erfolgreich Registriert:</h3>
-      <p>Benutzername: {{ registerForm.username }}</p>
-      <p>E-Mail: {{ registerForm.email }}</p>
+        <!-- Zeige nach erfolgreicher Registrierung eine Nachricht an -->
+        <div v-if="registerSubmitted && !registerErrorMessage">
+          <h3>Successfully Registered</h3>
+        </div>
+      </form>
     </div>
-  </div>
 
-  <!-- Login -->
-  <div class="login-container">
-    <h3>Login</h3>
-    <form @submit.prevent="handleLoginSubmit">
-      <label for="login-username">Benutzername:</label>
-      <input type="text" id="login-username" v-model="loginForm.username" required />
+    <!-- Login -->
+    <div class="form-container sign-in">
+      <form @submit.prevent="handleLoginSubmit">
+        <h1>Sign In</h1>
+        <!-- Benutzernamenfeld für den Login -->
+        <input type="text" v-model="loginForm.username" placeholder="Benutzername" required />
+        <input type="password" v-model="loginForm.passwort" placeholder="Password" required />
+        <a href="#">Forget Your Password?</a>
+        <button type="submit">Sign In</button>
 
-      <label for="login-password">Passwort:</label>
-      <input type="password" id="login-password" v-model="loginForm.passwort" required />
+        <!-- Zeige eine Fehlermeldung an, falls das Login fehlschlägt -->
+        <p v-if="loginErrorMessage" class="error">{{ loginErrorMessage }}</p>
 
-      <button type="submit">Login</button>
-    </form>
+        <!-- Zeige nach erfolgreichem Login eine Nachricht an -->
+        <div v-if="loginSubmitted && !loginErrorMessage">
+          <h3>Successfully Logged In</h3>
+        </div>
+      </form>
+    </div>
 
-    <!-- Zeige eine Fehlermeldung an, falls das Login fehlschlägt -->
-    <p v-if="loginErrorMessage" class="error">{{ loginErrorMessage }}</p>
-
-    <!-- Zeige nach erfolgreichem Login eine Nachricht an -->
-    <div v-if="loginSubmitted && !loginErrorMessage">
-      <h3>Erfolgreich Eingeloggt</h3>
+    <!-- Umschaltbares Panel -->
+    <div class="toggle-container">
+      <div class="toggle">
+        <div class="toggle-panel toggle-left">
+          <h1>Welcome Back!</h1>
+          <p>Enter your personal details to use all of site features</p>
+          <button class="hidden" id="login">Sign In</button>
+        </div>
+        <div class="toggle-panel toggle-right">
+          <h1>Hello, Friend!</h1>
+          <p>Register with your personal details to use all of site features</p>
+          <button class="hidden" id="register">Sign Up</button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css'); /* Icon styles */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Montserrat', sans-serif;
+}
+
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f2f2f2;
+  background-color: #c9d6ff;
+  background: linear-gradient(to right, #c9d6ff, #ffffff);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   height: 100vh;
   margin: 0;
 }
 
-.register-container, .login-container, .protected-resource {
-  background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 300px;
-  margin: 10px;
+.container {
+  background-color: #fff;
+  border-radius: 30px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+  position: relative;
+  overflow: hidden;
+  width: 768px;
+  max-width: 100%;
+  min-height: 480px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-h2, h3 {
-  text-align: center;
+.container p {
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.3px;
+  margin: 20px 0;
 }
 
-input[type="text"], input[type="email"], input[type="password"] {
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+.container span {
+  font-size: 12px;
 }
 
-button {
-  width: 100%;
-  padding: 10px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 5px;
+.container a {
+  color: #333;
+  font-size: 13px;
+  text-decoration: none;
+  margin: 15px 0 10px;
+}
+
+.container button {
+  background-color: #512da8;
+  color: #fff;
+  font-size: 12px;
+  padding: 10px 45px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-top: 10px;
   cursor: pointer;
 }
 
-button:hover {
-  background-color: #45a049;
+.container button.hidden {
+  background-color: transparent;
+  border-color: #fff;
+}
+
+.container form {
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 0 40px;
+  height: 100%;
+}
+
+.container input {
+  background-color: #eee;
+  border: none;
+  margin: 8px 0;
+  padding: 10px 15px;
+  font-size: 13px;
+  border-radius: 8px;
+  width: 100%;
+  outline: none;
+}
+
+.form-container {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  transition: all 0.6s ease-in-out;
+}
+
+.sign-in {
+  left: 0;
+  width: 50%;
+  z-index: 2;
+}
+
+.container.active .sign-in {
+  transform: translateX(100%);
+}
+
+.sign-up {
+  left: 0;
+  width: 50%;
+  opacity: 0;
+  z-index: 1;
+}
+
+.container.active .sign-up {
+  transform: translateX(100%);
+  opacity: 1;
+  z-index: 5;
+  animation: move 0.6s;
+}
+
+@keyframes move {
+  0%, 49.99% {
+    opacity: 0;
+    z-index: 1;
+  }
+  50%, 100% {
+    opacity: 1;
+    z-index: 5;
+  }
+}
+
+.social-icons{
+  margin: 20px 0;
+}
+
+.social-icons a{
+  border: 1px solid #ccc;
+  border-radius: 20%;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 3px;
+  width: 40px;
+  height: 40px;
+}
+
+.toggle-container {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+  transition: all 0.6s ease-in-out;
+  border-radius: 150px 0 0 100px;
+  z-index: 1000;
+}
+
+.container.active .toggle-container {
+  transform: translateX(-100%);
+  border-radius: 0 150px 100px 0;
+}
+
+.toggle {
+  background-color: #512da8;
+  height: 100%;
+  background: linear-gradient(to right, #512da8, #5c6bc0);
+  color: #fff;
+  position: relative;
+  left: -100%;
+  height: 100%;
+  width: 200%;
+  transform: translateX(0);
+  transition: all 0.6s ease-in-out;
+}
+
+.container.active .toggle {
+  transform: translateX(50%);
+}
+
+.toggle-panel {
+  position: absolute;
+  width: 50%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 0 30px;
+  text-align: center;
+  top: 0;
+  transform: translateX(0);
+  transition: all 0.6s ease-in-out;
+}
+
+.toggle-left {
+  transform: translateX(-200%);
+}
+
+.container.active .toggle-left {
+  transform: translateX(0);
+}
+
+.toggle-right {
+  right: 0;
+  transform: translateX(0);
+}
+
+.container.active .toggle-right {
+  transform: translateX(200%);
 }
 
 .error {
