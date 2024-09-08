@@ -23,7 +23,7 @@ const loginErrorMessage = ref('')
 
 const handleRegisterSubmit = async () => {
   try {
-    const response = await axios.post('http://localhost:8080/api/users/register', {
+    await axios.post('http://localhost:8080/api/users/register', {
       userName: registerForm.value.username,
       email: registerForm.value.email,
       password: registerForm.value.passwort
@@ -44,7 +44,7 @@ const handleRegisterSubmit = async () => {
 
 const handleLoginSubmit = async () => {
   try {
-    const response = await axios.post('http://localhost:8080/api/users/login', {
+    await axios.post('http://localhost:8080/api/users/login', {
       userName: loginForm.value.username,
       password: loginForm.value.passwort
     });
