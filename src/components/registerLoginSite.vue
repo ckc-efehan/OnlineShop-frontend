@@ -8,12 +8,14 @@
           <a href="#" class="icon"><i class="fa-brands fa-google"></i></a>
           <a href="#" class="icon"><i class="fa-brands fa-apple"></i></a>
         </div>
-        <input type="text" v-model="registerForm.username" placeholder="Benutzername" required />
-        <input type="email" v-model="registerForm.email" placeholder="Email" required />
-        <input type="password" v-model="registerForm.passwort" placeholder="Passwort" required />
+        <input type="text" v-model="registerForm.username" placeholder="Benutzernamen eingeben" required />
+        <input type="email" v-model="registerForm.email" placeholder="Email eingeben" required />
+        <input type="password" v-model="registerForm.passwort" placeholder="Passwort eingeben" required />
+        <input type="password" v-model="registerForm.confirmPasswort" placeholder="Passwort bestätigen" required />
         <button type="submit">Registrieren</button>
 
-        <!-- Zeige eine Fehlermeldung an, falls die Registrierung fehlschlägt -->
+        <!-- Zeige eine Fehlermeldung an, falls die Passwörter nicht übereinstimmen oder die Registrierung fehlschlägt -->
+        <p v-if="passwordMismatchMessage" class="error">{{ passwordMismatchMessage }}</p>
         <p v-if="registerErrorMessage" class="error">{{ registerErrorMessage }}</p>
 
         <!-- Zeige nach erfolgreicher Registrierung eine Nachricht an -->
@@ -23,7 +25,7 @@
       </form>
     </div>
 
-
+    <!-- Login Formular unverändert -->
     <div class="form-container sign-in">
       <form @submit.prevent="handleLoginSubmit">
         <h1>Anmelden</h1>
@@ -36,22 +38,20 @@
         <a href="#">Passwort vergessen?</a>
         <button type="submit">Anmelden</button>
 
-        <!-- Zeige eine Fehlermeldung an, falls das Login fehlschlägt -->
         <p v-if="loginErrorMessage" class="error">{{ loginErrorMessage }}</p>
 
-        <!-- Zeige nach erfolgreichem Login eine Nachricht an -->
         <div v-if="loginSubmitted && !loginErrorMessage">
           <h3>Successfully Logged In</h3>
         </div>
       </form>
     </div>
 
-    <!-- Umschaltbares Panel -->
+    <!-- Umschaltbares Panel unverändert -->
     <div class="toggle-container">
       <div class="toggle">
         <div class="toggle-panel toggle-left">
           <h1>Bereits registriert?</h1>
-          <p>Geben Sie Ihre Anmeldedaten ein, um mit dem Einkauf fortzufahren.</p>
+          <p>Geben Sie Ihre Anmeldedaten ein, um mit Ihrem Einkauf fortzufahren.</p>
           <button class="hidden" id="login">Anmelden</button>
         </div>
         <div class="toggle-panel toggle-right">
@@ -65,6 +65,7 @@
 </template>
 
 
+
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
@@ -73,7 +74,8 @@ import axios from 'axios';
 const registerForm = ref({
   username: '',
   email: '',
-  passwort: ''
+  passwort: '',
+  confirmPasswort: '' // Neues Feld für Passwortbestätigung
 });
 
 // Formulardaten für den Login
@@ -87,10 +89,18 @@ const registerSubmitted = ref(false);
 const loginSubmitted = ref(false);
 const registerErrorMessage = ref('');
 const loginErrorMessage = ref('');
+const passwordMismatchMessage = ref(''); // Fehlermeldung für Passwortbestätigung
 
 // Funktion für die Registrierung
 const handleRegisterSubmit = async () => {
+  // Überprüfe, ob die Passwörter übereinstimmen
+  if (registerForm.value.passwort !== registerForm.value.confirmPasswort) {
+    passwordMismatchMessage.value = 'Die Passwörter stimmen nicht überein.';
+    return;
+  }
+
   try {
+    // Registrierung beim Server durchführen
     await axios.post('http://localhost:8080/api/users/register', {
       userName: registerForm.value.username,
       email: registerForm.value.email,
@@ -98,17 +108,18 @@ const handleRegisterSubmit = async () => {
     });
     registerSubmitted.value = true;
     registerErrorMessage.value = '';
+    passwordMismatchMessage.value = ''; // Setze die Fehlermeldung zurück
   } catch (error: any) {
     registerSubmitted.value = false;
     registerErrorMessage.value = error.response?.data || 'Registration failed.';
   }
 };
 
-// Funktion für den Login (mit Benutzername)
+// Funktion für den Login
 const handleLoginSubmit = async () => {
   try {
     await axios.post('http://localhost:8080/api/users/login', {
-      userName: loginForm.value.username, // Benutzername statt E-Mail
+      userName: loginForm.value.username,
       password: loginForm.value.passwort
     });
     loginSubmitted.value = true;
@@ -138,6 +149,7 @@ onMounted(() => {
   }
 });
 </script>
+
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
