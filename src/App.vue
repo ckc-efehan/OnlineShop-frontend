@@ -1,15 +1,11 @@
 <template>
-  <div id="app">
-    <RegisterSite />
-  </div>
+  <router-view />
 </template>
 
 <script setup lang="ts">
-import RegisterSite from './components/registerLoginSite.vue'
 </script>
 
 <style>
-/* Entferne die Margin und das Padding von body und html */
 html, body {
   margin: 0;
   padding: 0;

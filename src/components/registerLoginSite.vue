@@ -68,14 +68,17 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';  // Importiere den Router
 import axios from 'axios';
+
+const router = useRouter();  // Initialisiere den Router
 
 // Formulardaten für die Registrierung
 const registerForm = ref({
   username: '',
   email: '',
   passwort: '',
-  confirmPasswort: '' // Neues Feld für Passwortbestätigung
+  confirmPasswort: ''
 });
 
 // Formulardaten für den Login
@@ -89,11 +92,10 @@ const registerSubmitted = ref(false);
 const loginSubmitted = ref(false);
 const registerErrorMessage = ref('');
 const loginErrorMessage = ref('');
-const passwordMismatchMessage = ref(''); // Fehlermeldung für Passwortbestätigung
+const passwordMismatchMessage = ref('');
 
 // Funktion für die Registrierung
 const handleRegisterSubmit = async () => {
-  // Überprüfe, ob die Passwörter übereinstimmen
   if (registerForm.value.passwort !== registerForm.value.confirmPasswort) {
     passwordMismatchMessage.value = 'Die Passwörter stimmen nicht überein.';
     return;
@@ -101,7 +103,7 @@ const handleRegisterSubmit = async () => {
 
   try {
     // Registrierung beim Server durchführen
-    await axios.post('http://localhost:8080/api/users/register', {
+    await axios.post('http://localhost:8080/api//register', {
       userName: registerForm.value.username,
       email: registerForm.value.email,
       password: registerForm.value.passwort
@@ -109,6 +111,7 @@ const handleRegisterSubmit = async () => {
     registerSubmitted.value = true;
     registerErrorMessage.value = '';
     passwordMismatchMessage.value = ''; // Setze die Fehlermeldung zurück
+
   } catch (error: any) {
     registerSubmitted.value = false;
     registerErrorMessage.value = error.response?.data || 'Registration failed.';
@@ -124,11 +127,15 @@ const handleLoginSubmit = async () => {
     });
     loginSubmitted.value = true;
     loginErrorMessage.value = '';
+
+    // Nach erfolgreichem Login zur Admin-Seite weiterleiten
+    router.push('/admin');  // Hier wird der Benutzer weitergeleitet
   } catch (error: any) {
     loginSubmitted.value = false;
     loginErrorMessage.value = error.response?.data || 'Login failed.';
   }
 };
+
 
 // Umschaltfunktion für Registrierung und Login
 onMounted(() => {
