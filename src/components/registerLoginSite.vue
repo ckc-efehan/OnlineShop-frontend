@@ -103,7 +103,7 @@ const handleRegisterSubmit = async () => {
 
   try {
     // Registrierung beim Server durchführen
-    await axios.post('http://localhost:8080/api//register', {
+    await axios.post('http://localhost:8080/api/v1/auth/register', {
       userName: registerForm.value.username,
       email: registerForm.value.email,
       password: registerForm.value.passwort
@@ -121,7 +121,7 @@ const handleRegisterSubmit = async () => {
 // Funktion für den Login
 const handleLoginSubmit = async () => {
   try {
-    await axios.post('http://localhost:8080/api/users/login', {
+    await axios.post('http://localhost:8080/api/v1/auth/authenticate', {
       userName: loginForm.value.username,
       password: loginForm.value.passwort
     });
