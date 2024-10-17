@@ -4,11 +4,8 @@
     <div class="form-container sign-up">
       <form @submit.prevent="handleRegisterSubmit">
         <h1>Account erstellen</h1>
-        <div class="social-icons">
-          <a href="#" class="icon"><i class="fa-brands fa-google"></i></a>
-          <a href="#" class="icon"><i class="fa-brands fa-apple"></i></a>
-        </div>
-        <input type="text" v-model="registerForm.username" placeholder="Benutzernamen eingeben" required />
+        <input type="text" v-model="registerForm.firstName" placeholder="Vorname eingeben" required />
+        <input type="text" v-model="registerForm.lastName" placeholder="Nachname eingeben" required />
         <input type="email" v-model="registerForm.email" placeholder="Email eingeben" required />
         <input type="password" v-model="registerForm.passwort" placeholder="Passwort eingeben" required />
         <input type="password" v-model="registerForm.confirmPasswort" placeholder="Passwort bestätigen" required />
@@ -25,7 +22,7 @@
       </form>
     </div>
 
-    <!-- Login Formular unverändert -->
+    <!-- Login Formular -->
     <div class="form-container sign-in">
       <form @submit.prevent="handleLoginSubmit">
         <h1>Anmelden</h1>
@@ -33,7 +30,7 @@
           <a href="#" class="icon"><i class="fa-brands fa-google"></i></a>
           <a href="#" class="icon"><i class="fa-brands fa-apple"></i></a>
         </div>
-        <input type="text" v-model="loginForm.username" placeholder="Benutzername" required />
+        <input type="email" v-model="loginForm.email" placeholder="Email" required />
         <input type="password" v-model="loginForm.passwort" placeholder="Passwort" required />
         <a href="#">Passwort vergessen?</a>
         <button type="submit">Anmelden</button>
@@ -41,12 +38,12 @@
         <p v-if="loginErrorMessage" class="error">{{ loginErrorMessage }}</p>
 
         <div v-if="loginSubmitted && !loginErrorMessage">
-          <h3>Successfully Logged In</h3>
+          <h3>Erfolgreich angemeldet</h3>
         </div>
       </form>
     </div>
 
-    <!-- Umschaltbares Panel unverändert -->
+    <!-- Umschaltbares Panel -->
     <div class="toggle-container">
       <div class="toggle">
         <div class="toggle-panel toggle-left">
@@ -66,6 +63,7 @@
 
 
 
+
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';  // Importiere den Router
@@ -75,7 +73,8 @@ const router = useRouter();  // Initialisiere den Router
 
 // Formulardaten für die Registrierung
 const registerForm = ref({
-  username: '',
+  firstName: '',
+  lastName: '',
   email: '',
   passwort: '',
   confirmPasswort: ''
@@ -83,7 +82,7 @@ const registerForm = ref({
 
 // Formulardaten für den Login
 const loginForm = ref({
-  username: '',
+  email: '',
   passwort: ''
 });
 
@@ -104,7 +103,8 @@ const handleRegisterSubmit = async () => {
   try {
     // Registrierung beim Server durchführen
     await axios.post('http://localhost:8080/api/v1/auth/register', {
-      userName: registerForm.value.username,
+      firstName: registerForm.value.firstName,
+      lastName: registerForm.value.lastName,
       email: registerForm.value.email,
       password: registerForm.value.passwort
     });
@@ -114,7 +114,7 @@ const handleRegisterSubmit = async () => {
 
   } catch (error: any) {
     registerSubmitted.value = false;
-    registerErrorMessage.value = error.response?.data || 'Registration failed.';
+    registerErrorMessage.value = error.response?.data || 'Registrierung fehlgeschlagen.';
   }
 };
 
@@ -122,7 +122,7 @@ const handleRegisterSubmit = async () => {
 const handleLoginSubmit = async () => {
   try {
     await axios.post('http://localhost:8080/api/v1/auth/authenticate', {
-      userName: loginForm.value.username,
+      email: loginForm.value.email,
       password: loginForm.value.passwort
     });
     loginSubmitted.value = true;
@@ -132,10 +132,9 @@ const handleLoginSubmit = async () => {
     router.push('/admin');  // Hier wird der Benutzer weitergeleitet
   } catch (error: any) {
     loginSubmitted.value = false;
-    loginErrorMessage.value = error.response?.data || 'Login failed.';
+    loginErrorMessage.value = error.response?.data || 'Login fehlgeschlagen.';
   }
 };
-
 
 // Umschaltfunktion für Registrierung und Login
 onMounted(() => {
@@ -156,6 +155,7 @@ onMounted(() => {
   }
 });
 </script>
+
 
 
 <style scoped>
