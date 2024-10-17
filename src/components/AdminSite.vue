@@ -40,7 +40,7 @@ const submitEntry = async () => {
 
   try {
     // Produktdaten an die API senden. Der JWT-Cookie wird automatisch mitgesendet.
-    await axios.post('http://localhost:8080/products', newProduct, {
+    await axios.post('http://localhost:8080/product', newProduct, {
       withCredentials: true  // Sende Cookies bei der Anfrage mit
     });
 
