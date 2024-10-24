@@ -4,8 +4,8 @@
     <div class="form-container sign-up">
       <form @submit.prevent="handleRegisterSubmit">
         <h1>Account erstellen</h1>
-        <input type="text" v-model="registerForm.firstName" placeholder="Vorname eingeben" required />
-        <input type="text" v-model="registerForm.lastName" placeholder="Nachname eingeben" required />
+        <input type="text" v-model="registerForm.firstname" placeholder="Vorname eingeben" required />
+        <input type="text" v-model="registerForm.lastname" placeholder="Nachname eingeben" required />
         <input type="email" v-model="registerForm.email" placeholder="Email eingeben" required />
         <input type="password" v-model="registerForm.passwort" placeholder="Passwort eingeben" required />
         <input type="password" v-model="registerForm.confirmPasswort" placeholder="Passwort bestätigen" required />
@@ -73,8 +73,8 @@ const router = useRouter();  // Initialisiere den Router
 
 // Formulardaten für die Registrierung
 const registerForm = ref({
-  firstName: '',
-  lastName: '',
+  firstname: '',
+  lastname: '',
   email: '',
   passwort: '',
   confirmPasswort: ''
@@ -103,8 +103,8 @@ const handleRegisterSubmit = async () => {
   try {
     // Registrierung beim Server durchführen
     await axios.post('http://localhost:8080/api/v1/auth/register', {
-      firstName: registerForm.value.firstName,
-      lastName: registerForm.value.lastName,
+      firstname: registerForm.value.firstname,
+      lastname: registerForm.value.lastname,
       email: registerForm.value.email,
       password: registerForm.value.passwort
     });
