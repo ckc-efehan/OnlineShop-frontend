@@ -5,7 +5,7 @@
       <span>Wie heißt das Produkt?</span>
       <input v-model="productName" type="text" placeholder="Produktname">
       <span>Was ist die Beschreibung des Produkts?</span>
-      <input v-model="productDescr" type="text" placeholder="Produktbeschreibung">
+      <input v-model="productDescription" type="text" placeholder="Produktbeschreibung">
       <span>Wie viel kostet das Produkt?</span>
       <input v-model="productPrice" type="number" step="0.01" placeholder="Produktpreis">
       <button @click="submitEntry">Senden</button>
@@ -23,7 +23,7 @@ import axios from 'axios';
 
 // Formularfelder für Produkteintrag
 const productName = ref('');
-const productDescr = ref('');
+const productDescription = ref('');
 const productPrice = ref<number | null>(null);
 
 // Erfolgs- und Fehlermeldungen
@@ -33,9 +33,9 @@ const errorMessage = ref('');
 // Funktion, um den Eintrag zu speichern
 const submitEntry = async () => {
   const newProduct = {
-    name: productName.value,
-    description: productDescr.value,
-    price: productPrice.value
+    productName: productName.value,
+    productDescription: productDescription.value,
+    productPrice: productPrice.value
   };
 
   try {
@@ -47,7 +47,7 @@ const submitEntry = async () => {
     successMessage.value = 'Produkt erfolgreich gespeichert!';
     errorMessage.value = '';
     productName.value = '';
-    productDescr.value = '';
+    productDescription.value = '';
     productPrice.value = null;
   } catch (error: any) {
     successMessage.value = '';
