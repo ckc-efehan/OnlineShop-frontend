@@ -102,7 +102,7 @@ const handleRegisterSubmit = async () => {
 
   try {
     // Registrierung beim Server durchführen
-    await axios.post('http://localhost:8080/api/v1/auth/register', {
+    await axios.post('https://onlineshop-ueqk.onrender.com/api/v1/auth/register', {
       firstname: registerForm.value.firstname,
       lastname: registerForm.value.lastname,
       email: registerForm.value.email,
@@ -121,7 +121,7 @@ const handleRegisterSubmit = async () => {
 // Funktion für den Login
 const handleLoginSubmit = async () => {
   try {
-    await axios.post('http://localhost:8080/api/v1/auth/authenticate', {
+    await axios.post('https://onlineshop-ueqk.onrender.com/api/v1/auth/authenticate', {
       email: loginForm.value.email,
       password: loginForm.value.passwort
     });
